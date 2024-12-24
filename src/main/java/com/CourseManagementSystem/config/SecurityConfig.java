@@ -1,6 +1,7 @@
 package com.CourseManagementSystem.config;
 
 import com.CourseManagementSystem.service.CustomUserDetailsService;
+import io.github.cdimascio.dotenv.Dotenv;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -47,6 +48,16 @@ public class SecurityConfig {
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception {
         return configuration.getAuthenticationManager();
+    }
+
+    @Bean
+    public Dotenv dotenv() {
+        return Dotenv.load(); // Load the .env file
+    }
+
+    @Bean
+    public String secretKey(Dotenv dotenv) {
+        return dotenv.get("SECRET_KEY"); // Extract the secret key
     }
 
 
