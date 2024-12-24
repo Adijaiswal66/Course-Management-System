@@ -14,12 +14,11 @@ public class JWTService {
 
     private static final long JWT_TOKEN_VALIDITY = 60 * 60 * 30;
 
-    private String secret = "afafasfafafasfasfasfafacasdasfasxASFACASDFACASDFASFASFDAFASFASDAADSCSDFADCVSGCFVADXCcadwa246824686868686";
-
     public String generateToken(String username) {
 
         Map<String, Object> claims = new HashMap<>();
 
+        String secret = "afafasfafafasfasfasfafacasdasfasxASFACASDFACASDFASFASFDAFASFASDAADSCSDFADCVSGCFVADXC246824686868686";
         return Jwts.builder()
                 .setClaims(claims)
                 .setSubject(username)

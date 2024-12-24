@@ -2,7 +2,6 @@ package com.CourseManagementSystem.service;
 
 import com.CourseManagementSystem.dao.UserRepository;
 import com.CourseManagementSystem.entities.JWTRequest;
-import com.CourseManagementSystem.entities.JWTResponse;
 import com.CourseManagementSystem.entities.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -56,7 +55,8 @@ public class UserService {
             String token = jwtService.generateToken(jwtRequest.getEmail());
             return new ResponseEntity<>(token, HttpStatus.OK);
         }
-        return new ResponseEntity<>("Failure", HttpStatus.FORBIDDEN);
+        return new ResponseEntity<>( "User not found !!",HttpStatus.NOT_FOUND);
+
 
     }
 
