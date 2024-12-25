@@ -50,15 +50,8 @@ public class SecurityConfig {
         return configuration.getAuthenticationManager();
     }
 
-    @Bean
-    public Dotenv dotenv() {
-        return Dotenv.load(); // Load the .env file
-    }
 
-    @Bean
-    public String secretKey(Dotenv dotenv) {
-        return dotenv.get("SECRET_KEY"); // Extract the secret key
-    }
+
 
 
 }
