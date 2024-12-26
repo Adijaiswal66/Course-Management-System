@@ -55,10 +55,29 @@ public class UserService {
             String token = jwtService.generateToken(jwtRequest.getEmail());
             return new ResponseEntity<>(token, HttpStatus.OK);
         }
-        return new ResponseEntity<>( "User not found !!",HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>("User not found !!", HttpStatus.NOT_FOUND);
 
 
     }
 
 
+    public ResponseEntity<String> editProfile(Long userId, User user) {
+        Optional<User> existingUser = this.userRepository.findById(userId);
+        if (existingUser.isPresent()) {
+            try {
+                existingUser.map(u -> {
+                    u.setName(user.getName());
+                    u.setPassword(encoder.encode(user.getPassword()));
+                    return this.userRepository.save(u);
+                });
+
+                return new ResponseEntity<>("User with email: " + existingUser.get().getEmail() + " is updated successfully", HttpStatus.OK);
+
+            } catch (Exception e) {
+                System.out.println(e.getMessage());
+            }
+
+        }
+        return new ResponseEntity<>("User not found !!", HttpStatus.NOT_FOUND);
+    }
 }

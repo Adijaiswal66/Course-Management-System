@@ -30,9 +30,7 @@ public class JWTService {
     public String generateToken(String username) {
 
         Map<String, Object> claims = new HashMap<>();
-
-        System.out.println("secret key: " + secretKey);
-
+        
         return Jwts.builder()
                 .setClaims(claims)
                 .setSubject(username)

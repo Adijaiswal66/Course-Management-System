@@ -32,7 +32,7 @@ public class SecurityConfig {
 
         return httpSecurity.csrf(AbstractHttpConfigurer::disable)
                 .cors(AbstractHttpConfigurer::disable)
-                .authorizeHttpRequests(request -> request.requestMatchers("/student/register", "/student/login").permitAll().anyRequest().authenticated())
+                .authorizeHttpRequests(request -> request.anyRequest().permitAll())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .build();
     }

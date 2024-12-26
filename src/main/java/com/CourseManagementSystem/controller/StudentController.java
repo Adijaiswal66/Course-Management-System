@@ -33,5 +33,10 @@ public class StudentController {
         return this.userService.login(jwtRequest);
     }
 
+    @PutMapping("/edit-profile/{userId}")
+    public ResponseEntity<String> editProfile(@PathVariable("userId") Long userId, @RequestBody User user){
+        return this.userService.editProfile(userId,user);
+    }
+
 
 }
