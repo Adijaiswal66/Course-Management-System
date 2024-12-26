@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.PathVariable;
 
 import java.util.List;
 import java.util.Optional;
@@ -43,5 +44,37 @@ public class CourseService {
 
         }
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+
+    public ResponseEntity<Course> getCourseById(@PathVariable("courseId") Long courseId) {
+        Optional<Course> existingCourse = this.courseRepository.findById(courseId);
+        if (existingCourse.isPresent()) {
+            Optional<Course> course = this.courseRepository.findById(courseId);
+            return new ResponseEntity<>(course.get(), HttpStatus.OK);
+        }
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
+
+
+    public ResponseEntity<String> editCourse(Long courseId, Course course) {
+        Optional<Course> existingCourse = this.courseRepository.findById(courseId);
+        if (existingCourse.isPresent()) {
+            existingCourse.map(c -> {
+                c.setCourseDescription(course.getCourseDescription());
+                return this.courseRepository.save(c);
+            });
+            return new ResponseEntity<>("Course with id: " + courseId + " is updated successfully!!", HttpStatus.OK);
+        }
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
+
+    public ResponseEntity<String> deleteCourse(Long courseId, Course course) {
+        Optional<Course> existingCourse = this.courseRepository.findById(courseId);
+        if (existingCourse.isPresent()) {
+            this.courseRepository.deleteById(courseId);
+            return new ResponseEntity<>("Course with id: " + courseId + " is deleted successfully", HttpStatus.OK);
+        }
+        return new ResponseEntity<>("Course with id " + course + "does not exist!!", HttpStatus.NOT_FOUND);
     }
 }
