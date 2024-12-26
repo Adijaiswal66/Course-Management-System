@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -30,4 +31,17 @@ public class CourseService {
     }
 
 
+    public ResponseEntity<List<Course>> getAllCourses() {
+        if (this.courseRepository.count() >= 1) {
+            try {
+                List<Course> courseList = this.courseRepository.findAll();
+                return new ResponseEntity<>(courseList, HttpStatus.OK);
+
+            } catch (Exception e) {
+                System.out.println(e.getMessage());
+            }
+
+        }
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
 }
