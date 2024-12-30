@@ -2,6 +2,9 @@ package com.CourseManagementSystem.entities;
 
 import jakarta.persistence.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity
 @Table(name = "Users")
 public class User {
@@ -18,6 +21,9 @@ public class User {
 
     @Column(name = "Password")
     private String password;
+
+    @ManyToMany(cascade = CascadeType.ALL)
+    private List<Course> courseList = new ArrayList<>();
 
     public Long getUserId() {
         return userId;
@@ -49,6 +55,14 @@ public class User {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public List<Course> getCourseList() {
+        return courseList;
+    }
+
+    public void setCourseList(List<Course> courseList) {
+        this.courseList = courseList;
     }
 
     public User() {

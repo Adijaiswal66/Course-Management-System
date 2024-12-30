@@ -3,6 +3,9 @@ package com.CourseManagementSystem.entities;
 import jakarta.persistence.*;
 import org.antlr.v4.runtime.misc.NotNull;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity
 @Table(name = "Course")
 public class Course{
@@ -17,6 +20,9 @@ public class Course{
 
     @Column(name = "Course_Description")
     private String courseDescription;
+
+    @ManyToMany(mappedBy = "courseList")
+    private List<User> user = new ArrayList<>();
 
     public Long getCourseId() {
         return courseId;
@@ -40,6 +46,14 @@ public class Course{
 
     public void setCourseDescription(String courseDescription) {
         this.courseDescription = courseDescription;
+    }
+
+    public List<User> getUser() {
+        return user;
+    }
+
+    public void setUser(List<User> user) {
+        this.user = user;
     }
 
     public Course() {

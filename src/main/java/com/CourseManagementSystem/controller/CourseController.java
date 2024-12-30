@@ -26,7 +26,7 @@ public class CourseController {
     }
 
     @GetMapping(value = "/view-course/{courseId}")
-    public ResponseEntity<Course> getCourseById(@PathVariable("courseId") Long courseId){
+    public ResponseEntity<Course> getCourseById(@PathVariable("courseId") Long courseId) {
         return this.courseService.getCourseById(courseId);
     }
 
@@ -38,6 +38,11 @@ public class CourseController {
     @DeleteMapping(value = "/delete-course/{courseId}")
     public ResponseEntity<String> deleteCourse(@PathVariable("courseId") Long courseId, @RequestBody Course course) {
         return this.courseService.deleteCourse(courseId, course);
+    }
+
+    @PostMapping(value = "/assign-course/{userId}/{courseId}")
+    public ResponseEntity<String> assignCourse(@PathVariable("userId") Long userId, @PathVariable("courseId") Long courseId) {
+        return this.courseService.assignCourse(userId, courseId);
     }
 
 

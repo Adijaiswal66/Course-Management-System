@@ -1,10 +1,15 @@
 package com.CourseManagementSystem.service;
 
 import com.CourseManagementSystem.dao.CourseRepository;
+import com.CourseManagementSystem.dao.UserRepository;
 import com.CourseManagementSystem.entities.Course;
+import com.CourseManagementSystem.entities.User;
+import com.CourseManagementSystem.errors.ResourceNotFoundException;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.PathVariable;
 
@@ -16,6 +21,9 @@ public class CourseService {
 
     @Autowired
     private CourseRepository courseRepository;
+
+    @Autowired
+    private UserRepository userRepository;
 
     public ResponseEntity<String> addCourse(Course course) {
         Optional<Course> existingCourse = this.courseRepository.findByCourseName(course.getCourseName());
@@ -76,5 +84,20 @@ public class CourseService {
             return new ResponseEntity<>("Course with id: " + courseId + " is deleted successfully", HttpStatus.OK);
         }
         return new ResponseEntity<>("Course with id " + course + "does not exist!!", HttpStatus.NOT_FOUND);
+    }
+
+    @Transactional
+    public ResponseEntity<String> assignCourse(Long userId, Long courseId) {
+        User existingUser = this.userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User not found !!"));
+        Course existingCourse = this.courseRepository.findById(courseId).orElseThrow(() -> new ResourceNotFoundException("Course not found!!"));
+
+        if (existingUser.getCourseList().contains(existingCourse)) {
+            return new ResponseEntity<>("Course is already assigned to this user", HttpStatus.OK);
+        }
+
+        List<Course> courses = existingUser.getCourseList();
+        courses.add(existingCourse);
+        this.userRepository.save(existingUser);
+        return new ResponseEntity<>("User with id: " + userId + " has been successfully assigned to course with id: " + courseId, HttpStatus.OK);
     }
 }
