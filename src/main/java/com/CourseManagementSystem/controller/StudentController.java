@@ -38,5 +38,9 @@ public class StudentController {
         return this.userService.editProfile(userId,user);
     }
 
+    @DeleteMapping(value = "/delete-profile/{userId}")
+    public ResponseEntity<String> deleteProfile(@PathVariable("userId") Long userId){
+        return this.userService.deleteProfile(userId);
+    }
 
 }

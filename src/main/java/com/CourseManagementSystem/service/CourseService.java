@@ -83,7 +83,7 @@ public class CourseService {
             this.courseRepository.deleteById(courseId);
             return new ResponseEntity<>("Course with id: " + courseId + " is deleted successfully", HttpStatus.OK);
         }
-        return new ResponseEntity<>("Course with id " + course + "does not exist!!", HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>("Course with id " + courseId + "does not exist!!", HttpStatus.NOT_FOUND);
     }
 
     @Transactional

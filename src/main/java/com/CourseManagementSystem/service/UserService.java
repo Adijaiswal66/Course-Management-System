@@ -80,4 +80,14 @@ public class UserService {
         }
         return new ResponseEntity<>("User not found !!", HttpStatus.NOT_FOUND);
     }
+
+    public ResponseEntity<String> deleteProfile(Long userId) {
+        Optional<User> existingUser = this.userRepository.findById(userId);
+        if (existingUser.isPresent()){
+            this.userRepository.delete(existingUser.get());
+            return new ResponseEntity<>("User with id: " + userId+" is deleted successfully!!",HttpStatus.OK
+            );
+        }
+        return new ResponseEntity<>("User with id " + userId + " does not exist!!", HttpStatus.NOT_FOUND);
+    }
 }
