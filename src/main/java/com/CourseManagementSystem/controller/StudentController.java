@@ -8,6 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController()
 @RequestMapping("/student")
 public class StudentController {
@@ -41,6 +43,11 @@ public class StudentController {
     @DeleteMapping(value = "/delete-profile/{userId}")
     public ResponseEntity<String> deleteProfile(@PathVariable("userId") Long userId){
         return this.userService.deleteProfile(userId);
+    }
+
+    @GetMapping(value = "/get-users")
+    public ResponseEntity<List<User>> getAllUsers(){
+        return this.userService.getAllUsers();
     }
 
 }

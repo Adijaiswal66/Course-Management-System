@@ -45,5 +45,12 @@ public class CourseController {
         return this.courseService.assignCourse(userId, courseId);
     }
 
+    @DeleteMapping(value = "/remove-course/{userId}/{courseId}")
+    public ResponseEntity<String> removeCourse(@PathVariable("userId") Long userId,@PathVariable("courseId") Long courseId){
+      return this.courseService.removeCourse(userId,courseId);
+    }
+
+
+
 
 }

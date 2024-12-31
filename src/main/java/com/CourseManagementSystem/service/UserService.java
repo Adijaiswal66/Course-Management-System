@@ -12,6 +12,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -83,11 +84,17 @@ public class UserService {
 
     public ResponseEntity<String> deleteProfile(Long userId) {
         Optional<User> existingUser = this.userRepository.findById(userId);
-        if (existingUser.isPresent()){
+        if (existingUser.isPresent()) {
             this.userRepository.delete(existingUser.get());
-            return new ResponseEntity<>("User with id: " + userId+" is deleted successfully!!",HttpStatus.OK
+            return new ResponseEntity<>("User with id: " + userId + " is deleted successfully!!", HttpStatus.OK
             );
         }
         return new ResponseEntity<>("User with id " + userId + " does not exist!!", HttpStatus.NOT_FOUND);
+    }
+
+    public ResponseEntity<List<User>> getAllUsers() {
+        List<User> userList = this.userRepository.findAll();
+        if (userList.isEmpty()) return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>(userList, HttpStatus.OK);
     }
 }

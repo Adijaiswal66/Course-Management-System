@@ -1,5 +1,7 @@
 package com.CourseManagementSystem.entities;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 
 import java.util.ArrayList;
@@ -23,6 +25,7 @@ public class User {
     private String password;
 
     @ManyToMany(cascade = CascadeType.ALL)
+    @JsonBackReference
     private List<Course> courseList = new ArrayList<>();
 
     public Long getUserId() {

@@ -1,5 +1,6 @@
 package com.CourseManagementSystem.entities;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import org.antlr.v4.runtime.misc.NotNull;
 
@@ -22,6 +23,7 @@ public class Course{
     private String courseDescription;
 
     @ManyToMany(mappedBy = "courseList")
+    @JsonManagedReference
     private List<User> user = new ArrayList<>();
 
     public Long getCourseId() {

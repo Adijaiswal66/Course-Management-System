@@ -100,4 +100,16 @@ public class CourseService {
         this.userRepository.save(existingUser);
         return new ResponseEntity<>("User with id: " + userId + " has been successfully assigned to course with id: " + courseId, HttpStatus.OK);
     }
+
+    public ResponseEntity<String> removeCourse(Long userId, Long courseId) {
+        User existingUser = this.userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User not found !!"));
+        Course existingCourse = this.courseRepository.findById(courseId).orElseThrow(() -> new ResourceNotFoundException("Course not found !!"));
+
+        if (!existingUser.getCourseList().contains(existingCourse)) {
+            return new ResponseEntity<>("User is not assigned with this course !!", HttpStatus.NOT_FOUND);
+        }
+        existingUser.getCourseList().remove(existingCourse);
+        this.userRepository.save(existingUser);
+        return new ResponseEntity<>("User is removed from this course !!", HttpStatus.OK);
+    }
 }
