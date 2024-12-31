@@ -1,10 +1,8 @@
 package com.CourseManagementSystem.entities;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -24,9 +22,9 @@ public class User {
     @Column(name = "Password")
     private String password;
 
-    @ManyToMany(cascade = CascadeType.ALL)
-    @JsonBackReference
-    private List<Course> courseList = new ArrayList<>();
+    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JsonIgnoreProperties("users") // Ignore the userList when serializing courses
+    private List<Course> courseList;
 
     public Long getUserId() {
         return userId;

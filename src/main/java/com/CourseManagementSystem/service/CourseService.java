@@ -49,7 +49,6 @@ public class CourseService {
             } catch (Exception e) {
                 System.out.println(e.getMessage());
             }
-
         }
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
@@ -94,7 +93,6 @@ public class CourseService {
         if (existingUser.getCourseList().contains(existingCourse)) {
             return new ResponseEntity<>("Course is already assigned to this user", HttpStatus.OK);
         }
-
         List<Course> courses = existingUser.getCourseList();
         courses.add(existingCourse);
         this.userRepository.save(existingUser);

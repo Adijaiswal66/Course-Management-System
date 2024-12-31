@@ -1,8 +1,7 @@
 package com.CourseManagementSystem.entities;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
-import org.antlr.v4.runtime.misc.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,7 +22,7 @@ public class Course{
     private String courseDescription;
 
     @ManyToMany(mappedBy = "courseList")
-    @JsonManagedReference
+    @JsonIgnoreProperties("courseList") // Ignore the courseList when serializing users
     private List<User> user = new ArrayList<>();
 
     public Long getCourseId() {

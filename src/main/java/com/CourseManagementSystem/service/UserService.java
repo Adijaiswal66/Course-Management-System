@@ -3,6 +3,7 @@ package com.CourseManagementSystem.service;
 import com.CourseManagementSystem.dao.UserRepository;
 import com.CourseManagementSystem.entities.JWTRequest;
 import com.CourseManagementSystem.entities.User;
+import com.CourseManagementSystem.errors.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -96,5 +97,11 @@ public class UserService {
         List<User> userList = this.userRepository.findAll();
         if (userList.isEmpty()) return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         return new ResponseEntity<>(userList, HttpStatus.OK);
+    }
+
+    public ResponseEntity<User> getUserById(Long userId) {
+        User user = this.userRepository.findById(userId).orElseThrow(()-> new ResourceNotFoundException("User not found!!"));
+        System.out.println(user.getCourseList());
+        return new ResponseEntity<>(user,HttpStatus.OK);
     }
 }

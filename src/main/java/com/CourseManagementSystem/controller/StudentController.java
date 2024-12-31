@@ -50,4 +50,9 @@ public class StudentController {
         return this.userService.getAllUsers();
     }
 
+    @GetMapping(value = "/get-user/{userId}")
+    public ResponseEntity<User> getUserById(@PathVariable("userId") Long userId){
+        return this.userService.getUserById(userId);
+    }
+
 }
