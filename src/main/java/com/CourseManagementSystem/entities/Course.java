@@ -1,6 +1,8 @@
 package com.CourseManagementSystem.entities;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 
 import java.util.ArrayList;
@@ -8,7 +10,7 @@ import java.util.List;
 
 @Entity
 @Table(name = "Course")
-public class Course{
+public class Course {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "course_seq_gen")
@@ -21,11 +23,12 @@ public class Course{
     @Column(name = "Course_Description")
     private String courseDescription;
 
-    @ManyToMany(mappedBy = "courseList",cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @ManyToMany(mappedBy = "courseList", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JsonIgnoreProperties("courseList") // Ignore the courseList when serializing users
     private List<User> user = new ArrayList<>();
 
     @OneToOne(mappedBy = "course")
+    @JsonManagedReference
     private Assignment assignment;
 
     public Long getCourseId() {

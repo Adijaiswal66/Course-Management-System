@@ -1,5 +1,9 @@
 package com.CourseManagementSystem.entities;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 
 import java.util.Date;
@@ -19,6 +23,7 @@ public class Assignment {
     private Date assignmentDueDate;
 
     @OneToOne
+    @JsonBackReference
     private Course course;
 
     public Long getAssignmentID() {
