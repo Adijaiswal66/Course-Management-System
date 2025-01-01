@@ -23,6 +23,11 @@ public class AssignmentController {
     @GetMapping(value = "/view-assignments")
     public ResponseEntity<List<Assignment>> getAllAssignments(){
         return this.assignmentService.getAllAssignments();
-
     }
+
+    @PutMapping(value = "/edit-assignment/{assignmentID}")
+    public ResponseEntity<String> editAssignment(@PathVariable("assignmentID") Long assignmentID,@RequestBody Assignment assignment){
+        return this.assignmentService.editAssignment(assignmentID,assignment);
+    }
+
 }
