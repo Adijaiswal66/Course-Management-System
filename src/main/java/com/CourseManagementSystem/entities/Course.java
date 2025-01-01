@@ -21,9 +21,12 @@ public class Course{
     @Column(name = "Course_Description")
     private String courseDescription;
 
-    @ManyToMany(mappedBy = "courseList")
+    @ManyToMany(mappedBy = "courseList",cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JsonIgnoreProperties("courseList") // Ignore the courseList when serializing users
     private List<User> user = new ArrayList<>();
+
+    @OneToOne(mappedBy = "course")
+    private Assignment assignment;
 
     public Long getCourseId() {
         return courseId;
@@ -57,21 +60,22 @@ public class Course{
         this.user = user;
     }
 
+    public Assignment getAssignments() {
+        return assignment;
+    }
+
+    public void setAssignments(Assignment assignment) {
+        this.assignment = assignment;
+    }
+
     public Course() {
     }
 
-    @Override
-    public String toString() {
-        return "Course{" +
-                "courseId=" + courseId +
-                ", courseName='" + courseName + '\'' +
-                ", courseDescription='" + courseDescription + '\'' +
-                '}';
-    }
-
-    public Course(Long courseId, String courseName, String courseDescription) {
+    public Course(Long courseId, String courseName, String courseDescription, List<User> user, Assignment assignment) {
         this.courseId = courseId;
         this.courseName = courseName;
         this.courseDescription = courseDescription;
+        this.user = user;
+        this.assignment = assignment;
     }
 }

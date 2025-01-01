@@ -22,8 +22,8 @@ public class User {
     @Column(name = "Password")
     private String password;
 
-    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    @JsonIgnoreProperties("users") // Ignore the userList when serializing courses
+    @ManyToMany(cascade = CascadeType.ALL,fetch = FetchType.EAGER)
+    @JsonIgnoreProperties("user") // Ignore the user when serializing courses
     private List<Course> courseList;
 
     public Long getUserId() {
