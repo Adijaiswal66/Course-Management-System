@@ -1,9 +1,6 @@
 package com.CourseManagementSystem.entities;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 
 import java.util.Date;
@@ -21,6 +18,8 @@ public class Assignment {
     private String assignmentDescription;
 
     private Date assignmentDueDate;
+
+    private Boolean isAssignmentSubmitted;
 
     @OneToOne
     @JsonBackReference
@@ -66,14 +65,23 @@ public class Assignment {
         this.course = course;
     }
 
+    public Boolean getAssignmentSubmitted() {
+        return isAssignmentSubmitted;
+    }
+
+    public void setAssignmentSubmitted(Boolean assignmentSubmitted) {
+        isAssignmentSubmitted = assignmentSubmitted;
+    }
+
     public Assignment() {
     }
 
-    public Assignment(Long assignmentID, String assignmentName, String assignmentDescription, Date assignmentDueDate, Course course) {
+    public Assignment(Long assignmentID, String assignmentName, String assignmentDescription, Date assignmentDueDate, Boolean isAssignmentSubmitted, Course course) {
         this.assignmentID = assignmentID;
         this.assignmentName = assignmentName;
         this.assignmentDescription = assignmentDescription;
         this.assignmentDueDate = assignmentDueDate;
+        this.isAssignmentSubmitted = isAssignmentSubmitted;
         this.course = course;
     }
 }

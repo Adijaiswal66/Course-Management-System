@@ -36,7 +36,6 @@ public class UserService {
         if (existingUser.isEmpty()) {
             try {
                 user.setPassword(encoder.encode(user.getPassword()));
-                System.out.println(user);
                 this.userRepository.save(user);
                 return new ResponseEntity<>("User with email " + user.getEmail() + " is registered successfully !!", HttpStatus.OK);
             } catch (Exception e) {
@@ -49,7 +48,6 @@ public class UserService {
     }
 
     public ResponseEntity<String> login(JWTRequest jwtRequest) {
-        System.out.println("JWT Request: " + jwtRequest);
 
         Authentication authenticate = this.manager.authenticate(new UsernamePasswordAuthenticationToken(jwtRequest.getEmail(), jwtRequest.getPassword()));
 
@@ -61,7 +59,6 @@ public class UserService {
 
 
     }
-
 
     public ResponseEntity<String> editProfile(Long userId, User user) {
         Optional<User> existingUser = this.userRepository.findById(userId);
@@ -101,7 +98,6 @@ public class UserService {
 
     public ResponseEntity<User> getUserById(Long userId) {
         User user = this.userRepository.findById(userId).orElseThrow(()-> new ResourceNotFoundException("User not found!!"));
-        System.out.println(user.getCourseList());
         return new ResponseEntity<>(user,HttpStatus.OK);
     }
 }
