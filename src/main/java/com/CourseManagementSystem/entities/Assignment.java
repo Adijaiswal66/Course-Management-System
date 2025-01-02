@@ -4,13 +4,14 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 
 import java.util.Date;
+import java.util.List;
 
 @Entity
 @Table(name = "Assignment")
 public class Assignment {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long assignmentID;
 
     private String assignmentName;
@@ -19,11 +20,12 @@ public class Assignment {
 
     private Date assignmentDueDate;
 
-    private Boolean isAssignmentSubmitted;
-
     @OneToOne
     @JsonBackReference
     private Course course;
+
+    @OneToMany(mappedBy = "assignment",cascade = CascadeType.ALL)
+    private List<AssignmentSubmission> assignmentSubmissionList;
 
     public Long getAssignmentID() {
         return assignmentID;
@@ -65,13 +67,21 @@ public class Assignment {
         this.course = course;
     }
 
-    public Boolean getAssignmentSubmitted() {
-        return isAssignmentSubmitted;
+    public List<AssignmentSubmission> getAssignmentSubmissionList() {
+        return assignmentSubmissionList;
     }
 
-    public void setAssignmentSubmitted(Boolean assignmentSubmitted) {
-        isAssignmentSubmitted = assignmentSubmitted;
+    public void setAssignmentSubmissionList(List<AssignmentSubmission> assignmentSubmissionList) {
+        this.assignmentSubmissionList = assignmentSubmissionList;
     }
+
+    //    public Boolean getAssignmentSubmitted() {
+//        return isAssignmentSubmitted;
+//    }
+//
+//    public void setAssignmentSubmitted(Boolean assignmentSubmitted) {
+//        isAssignmentSubmitted = assignmentSubmitted;
+//    }
 
     public Assignment() {
     }
@@ -81,7 +91,7 @@ public class Assignment {
         this.assignmentName = assignmentName;
         this.assignmentDescription = assignmentDescription;
         this.assignmentDueDate = assignmentDueDate;
-        this.isAssignmentSubmitted = isAssignmentSubmitted;
+//        this.isAssignmentSubmitted = isAssignmentSubmitted;
         this.course = course;
     }
 }

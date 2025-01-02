@@ -15,9 +15,9 @@ public class AssignmentSubmissionController {
     @Autowired
     private AssignmentSubmissionService assignmentSubmissionService;
 
-    @PostMapping(value = "/upload")
-    public ResponseEntity<String> uploadFile(@RequestParam("image") MultipartFile multipartFile) throws IOException {
-        return this.assignmentSubmissionService.uploadFile(multipartFile);
+    @PostMapping(value = "/upload/{userId}/{assignmentID}")
+    public ResponseEntity<String> uploadFile(@PathVariable("userId") Long userId, @PathVariable("assignmentID") Long assignmentID, @RequestParam("image") MultipartFile multipartFile) throws IOException {
+        return this.assignmentSubmissionService.uploadFile(userId, assignmentID, multipartFile);
     }
 
     @GetMapping(value = "/download/{assignmentSubmissionId}")

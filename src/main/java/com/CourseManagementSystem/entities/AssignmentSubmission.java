@@ -25,6 +25,14 @@ public class AssignmentSubmission {
     @Column(name = "imagedata")
     private byte[] imageData;
 
+//    private Boolean isAssignmentSubmitted;
+
+    @ManyToOne
+    private Assignment assignment;
+
+    @ManyToOne
+    private User user;
+
     public Long getAssignmentSubmissionId() {
         return assignmentSubmissionId;
     }
@@ -65,6 +73,32 @@ public class AssignmentSubmission {
         this.imageData = imageData;
     }
 
+    public Assignment getAssignment() {
+        return assignment;
+    }
+
+    public void setAssignment(Assignment assignment) {
+        this.assignment = assignment;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+/*
+    public Boolean getAssignmentSubmitted() {
+        return isAssignmentSubmitted;
+    }
+
+    public void setAssignmentSubmitted(Boolean assignmentSubmitted) {
+        isAssignmentSubmitted = assignmentSubmitted;
+    }
+*/
+
     public AssignmentSubmission() {
     }
 
@@ -76,14 +110,20 @@ public class AssignmentSubmission {
                 ", assignmentSubmissionDate=" + assignmentSubmissionDate +
                 ", type='" + type + '\'' +
                 ", imageData=" + Arrays.toString(imageData) +
+//                ", isAssignmentSubmitted=" + isAssignmentSubmitted +
+                ", assignment=" + assignment +
+                ", user=" + user +
                 '}';
     }
 
-    public AssignmentSubmission(Long assignmentSubmissionId, String assignmentSubmissionName, Date assignmentSubmissionDate, String type, byte[] imageData) {
+    public AssignmentSubmission(Long assignmentSubmissionId, String assignmentSubmissionName, Date assignmentSubmissionDate, String type, byte[] imageData, Boolean isAssignmentSubmitted, Assignment assignment, User user) {
         this.assignmentSubmissionId = assignmentSubmissionId;
         this.assignmentSubmissionName = assignmentSubmissionName;
         this.assignmentSubmissionDate = assignmentSubmissionDate;
         this.type = type;
         this.imageData = imageData;
+//        this.isAssignmentSubmitted = isAssignmentSubmitted;
+        this.assignment = assignment;
+        this.user = user;
     }
 }

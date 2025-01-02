@@ -10,7 +10,7 @@ import java.util.List;
 public class User {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long userId;
 
     @Column(name = "Name")
@@ -25,6 +25,9 @@ public class User {
     @ManyToMany(cascade = CascadeType.ALL,fetch = FetchType.EAGER)
     @JsonIgnoreProperties("user") // Ignore the user when serializing courses
     private List<Course> courseList;
+
+    @OneToMany(mappedBy = "user",cascade = CascadeType.ALL)
+    private List<AssignmentSubmission> assignmentSubmissionList;
 
     public Long getUserId() {
         return userId;
@@ -64,6 +67,14 @@ public class User {
 
     public void setCourseList(List<Course> courseList) {
         this.courseList = courseList;
+    }
+
+    public List<AssignmentSubmission> getAssignmentSubmissionList() {
+        return assignmentSubmissionList;
+    }
+
+    public void setAssignmentSubmissionList(List<AssignmentSubmission> assignmentSubmissionList) {
+        this.assignmentSubmissionList = assignmentSubmissionList;
     }
 
     public User() {

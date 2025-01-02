@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,8 +14,7 @@ import java.util.List;
 public class Course {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "course_seq_gen")
-    @SequenceGenerator(name = "course_seq_gen", sequenceName = "course_seq", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long courseId;
 
     @Column(name = "Course_Name")
@@ -30,6 +30,9 @@ public class Course {
     @OneToOne(mappedBy = "course")
     @JsonManagedReference
     private Assignment assignment;
+
+    @OneToOne
+    private AssignmentSubmission assignmentSubmission;
 
     public Long getCourseId() {
         return courseId;
