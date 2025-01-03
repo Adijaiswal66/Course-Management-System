@@ -16,18 +16,17 @@ public class AssignmentController {
     private AssignmentService assignmentService;
 
     @PostMapping(value = "/create-assignment")
-    public ResponseEntity<String> createAssignment(@RequestBody Assignment assignment){
+    public ResponseEntity<String> createAssignment(@RequestBody Assignment assignment) {
         return this.assignmentService.createAssignment(assignment);
     }
 
     @GetMapping(value = "/view-assignments")
-    public ResponseEntity<List<Assignment>> getAllAssignments(){
+    public ResponseEntity<List<Assignment>> getAllAssignments() {
         return this.assignmentService.getAllAssignments();
     }
 
     @PutMapping(value = "/edit-assignment/{assignmentID}")
-    public ResponseEntity<String> editAssignment(@PathVariable("assignmentID") Long assignmentID,@RequestBody Assignment assignment){
-        return this.assignmentService.editAssignment(assignmentID,assignment);
+    public ResponseEntity<String> editAssignment(@PathVariable("assignmentID") Long assignmentID, @RequestBody Assignment assignment) {
+        return this.assignmentService.editAssignment(assignmentID, assignment);
     }
-
 }

@@ -1,5 +1,6 @@
 package com.CourseManagementSystem.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Builder;
 
@@ -22,10 +23,10 @@ public class AssignmentSubmission {
     private String type;
 
     @Lob
+    @JsonIgnore
+    @Basic(fetch = FetchType.EAGER)
     @Column(name = "imagedata")
     private byte[] imageData;
-
-//    private Boolean isAssignmentSubmitted;
 
     @ManyToOne
     private Assignment assignment;
@@ -89,16 +90,6 @@ public class AssignmentSubmission {
         this.user = user;
     }
 
-/*
-    public Boolean getAssignmentSubmitted() {
-        return isAssignmentSubmitted;
-    }
-
-    public void setAssignmentSubmitted(Boolean assignmentSubmitted) {
-        isAssignmentSubmitted = assignmentSubmitted;
-    }
-*/
-
     public AssignmentSubmission() {
     }
 
@@ -110,19 +101,17 @@ public class AssignmentSubmission {
                 ", assignmentSubmissionDate=" + assignmentSubmissionDate +
                 ", type='" + type + '\'' +
                 ", imageData=" + Arrays.toString(imageData) +
-//                ", isAssignmentSubmitted=" + isAssignmentSubmitted +
                 ", assignment=" + assignment +
                 ", user=" + user +
                 '}';
     }
 
-    public AssignmentSubmission(Long assignmentSubmissionId, String assignmentSubmissionName, Date assignmentSubmissionDate, String type, byte[] imageData, Boolean isAssignmentSubmitted, Assignment assignment, User user) {
+    public AssignmentSubmission(Long assignmentSubmissionId, String assignmentSubmissionName, Date assignmentSubmissionDate, String type, byte[] imageData, Assignment assignment, User user) {
         this.assignmentSubmissionId = assignmentSubmissionId;
         this.assignmentSubmissionName = assignmentSubmissionName;
         this.assignmentSubmissionDate = assignmentSubmissionDate;
         this.type = type;
         this.imageData = imageData;
-//        this.isAssignmentSubmitted = isAssignmentSubmitted;
         this.assignment = assignment;
         this.user = user;
     }

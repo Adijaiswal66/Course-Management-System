@@ -5,7 +5,9 @@ import com.CourseManagementSystem.entities.JWTRequest;
 import com.CourseManagementSystem.entities.User;
 import com.CourseManagementSystem.errors.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -36,6 +38,7 @@ public class UserService {
         if (existingUser.isEmpty()) {
             try {
                 user.setPassword(encoder.encode(user.getPassword()));
+                user.setEmail(user.getEmail().toLowerCase());
                 this.userRepository.save(user);
                 return new ResponseEntity<>("User with email " + user.getEmail() + " is registered successfully !!", HttpStatus.OK);
             } catch (Exception e) {
@@ -47,18 +50,45 @@ public class UserService {
 
     }
 
-    public ResponseEntity<String> login(JWTRequest jwtRequest) {
+//    public ResponseEntity<String> login(JWTRequest jwtRequest) {
+//
+//        Authentication authenticate = this.manager.authenticate(new UsernamePasswordAuthenticationToken(jwtRequest.getEmail(), jwtRequest.getPassword()));
+//
+//        if (authenticate.isAuthenticated()) {
+//            String token = jwtService.generateToken(jwtRequest.getEmail());
+//            return new ResponseEntity<>(token, HttpStatus.OK);
+//        }
+//        return new ResponseEntity<>("User not found !!", HttpStatus.NOT_FOUND);
+//    }
 
-        Authentication authenticate = this.manager.authenticate(new UsernamePasswordAuthenticationToken(jwtRequest.getEmail(), jwtRequest.getPassword()));
+    public ResponseEntity<?> login(JWTRequest jwtRequest) {
+        // Authenticate the user
+        Authentication authenticate = this.manager.authenticate(
+                new UsernamePasswordAuthenticationToken(jwtRequest.getEmail(), jwtRequest.getPassword())
+        );
 
         if (authenticate.isAuthenticated()) {
+            // Generate JWT token
             String token = jwtService.generateToken(jwtRequest.getEmail());
-            return new ResponseEntity<>(token, HttpStatus.OK);
+
+            // Create HTTP-only cookie for the token
+            ResponseCookie jwtCookie = ResponseCookie.from("jwtToken", token)
+                    .httpOnly(true)
+                    .secure(true) // Ensures it's only sent over HTTPS
+                    .path("/")
+                    .maxAge(7 * 24 * 60 * 60) // Token expiry (7 days)
+                    .build();
+
+            // Return cookie and a success response
+            return ResponseEntity.ok()
+                    .header(HttpHeaders.SET_COOKIE, jwtCookie.toString())
+                    .body("Login successful!");
         }
-        return new ResponseEntity<>("User not found !!", HttpStatus.NOT_FOUND);
 
-
+        // Handle authentication failure
+        return new ResponseEntity<>("Invalid email or password.", HttpStatus.UNAUTHORIZED);
     }
+
 
     public ResponseEntity<String> editProfile(Long userId, User user) {
         Optional<User> existingUser = this.userRepository.findById(userId);

@@ -31,7 +31,7 @@ public class StudentController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<String> login(@RequestBody JWTRequest jwtRequest) {
+    public ResponseEntity<?> login(@RequestBody JWTRequest jwtRequest) {
         return this.userService.login(jwtRequest);
     }
 

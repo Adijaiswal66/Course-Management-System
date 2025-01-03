@@ -31,9 +31,6 @@ public class Course {
     @JsonManagedReference
     private Assignment assignment;
 
-    @OneToOne
-    private AssignmentSubmission assignmentSubmission;
-
     public Long getCourseId() {
         return courseId;
     }
