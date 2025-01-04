@@ -30,7 +30,7 @@ public class User {
     @Column(name = "Password")
     private String password;
 
-    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JsonIgnoreProperties("user") // Ignore the user when serializing courses
     private List<Course> courseList;
 

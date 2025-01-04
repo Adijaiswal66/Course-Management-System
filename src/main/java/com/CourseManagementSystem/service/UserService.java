@@ -4,6 +4,7 @@ import com.CourseManagementSystem.dao.UserRepository;
 import com.CourseManagementSystem.entities.JWTRequest;
 import com.CourseManagementSystem.entities.User;
 import com.CourseManagementSystem.errors.ResourceNotFoundException;
+import com.CourseManagementSystem.security.LoginAttemptService;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -32,6 +33,9 @@ public class UserService {
 
     @Autowired
     private JWTService jwtService;
+
+    @Autowired
+    private LoginAttemptService loginAttemptService;
 
     @Transactional
     public ResponseEntity<String> registerUser(User user) {
@@ -64,29 +68,35 @@ public class UserService {
 //    }
 
     public ResponseEntity<?> login(JWTRequest jwtRequest) {
-        // Authenticate the user
-        Authentication authenticate = this.manager.authenticate(
-                new UsernamePasswordAuthenticationToken(jwtRequest.getEmail(), jwtRequest.getPassword())
-        );
-
-        if (authenticate.isAuthenticated()) {
-            // Generate JWT token
-            String token = jwtService.generateToken(jwtRequest.getEmail());
-
-            // Create HTTP-only cookie for the token
-            ResponseCookie jwtCookie = ResponseCookie.from("jwtToken", token)
-                    .httpOnly(true)
-                    .secure(true) // Ensures it's only sent over HTTPS
-                    .path("/")
-                    .maxAge(7 * 24 * 60 * 60) // Token expiry (7 days)
-                    .build();
-
-            // Return cookie and a success response
-            return ResponseEntity.ok()
-                    .header(HttpHeaders.SET_COOKIE, jwtCookie.toString())
-                    .body("Login successful!");
+        if (loginAttemptService.isBlocked(jwtRequest.getEmail())) {
+            return new ResponseEntity<>("Your account is locked due to too many failed attempts. Please try again after some time!!", HttpStatus.FORBIDDEN);
         }
+        try {
+            // Authenticate the user
+            Authentication authenticate = this.manager.authenticate(new UsernamePasswordAuthenticationToken(jwtRequest.getEmail(), jwtRequest.getPassword()));
+            loginAttemptService.loginSucceeded(jwtRequest.getEmail());
+            if (authenticate.isAuthenticated()) {
 
+                // Generate JWT token
+                String token = jwtService.generateToken(jwtRequest.getEmail());
+
+                // Create HTTP-only cookie for the token
+                ResponseCookie jwtCookie = ResponseCookie.from("jwtToken", token)
+                        .httpOnly(true)
+                        .secure(true) // Ensures it's only sent over HTTPS
+                        .path("/")
+                        .maxAge(7 * 24 * 60 * 60) // Token expiry (7 days)
+                        .build();
+
+                // Return cookie and a success response
+                return ResponseEntity.ok()
+                        .header(HttpHeaders.SET_COOKIE, jwtCookie.toString())
+                        .body("Login successful!");
+            }
+        } catch (Exception e) {
+            loginAttemptService.loginFailed(jwtRequest.getEmail());
+            System.out.println(e.getMessage());
+        }
         // Handle authentication failure
         return new ResponseEntity<>("Invalid email or password.", HttpStatus.UNAUTHORIZED);
     }
@@ -129,7 +139,7 @@ public class UserService {
     }
 
     public ResponseEntity<User> getUserById(Long userId) {
-        User user = this.userRepository.findById(userId).orElseThrow(()-> new ResourceNotFoundException("User not found!!"));
-        return new ResponseEntity<>(user,HttpStatus.OK);
+        User user = this.userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User not found!!"));
+        return new ResponseEntity<>(user, HttpStatus.OK);
     }
 }
