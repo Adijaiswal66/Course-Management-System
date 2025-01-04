@@ -2,6 +2,7 @@ package com.CourseManagementSystem.entities;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 
 import java.util.Date;
 import java.util.List;
@@ -14,8 +15,10 @@ public class Assignment {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long assignmentID;
 
+    @NotBlank(message = "Assignment name cannot be empty")
     private String assignmentName;
 
+    @NotBlank(message = "Please enter description")
     private String assignmentDescription;
 
     private Date assignmentDueDate;

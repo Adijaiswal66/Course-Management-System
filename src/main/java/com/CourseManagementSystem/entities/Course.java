@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.ArrayList;
@@ -17,9 +18,11 @@ public class Course {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long courseId;
 
+    @NotBlank(message = "Course name cannot be empty")
     @Column(name = "Course_Name")
     private String courseName;
 
+    @NotBlank(message = "Course description is mandatory")
     @Column(name = "Course_Description")
     private String courseDescription;
 

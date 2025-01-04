@@ -2,6 +2,9 @@ package com.CourseManagementSystem.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 
 import java.util.List;
 
@@ -13,20 +16,25 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long userId;
 
+    @NotBlank(message = "Name can not be blank")
     @Column(name = "Name")
     private String name;
 
+    @NotBlank(message = "Email field is mandatory")
+    @Email
     @Column(name = "Email")
     private String email;
 
+    @NotBlank(message = "Password field is mandatory")
+    @Size(min = 6, message = "Password must be of minimum 6 characters")
     @Column(name = "Password")
     private String password;
 
-    @ManyToMany(cascade = CascadeType.ALL,fetch = FetchType.EAGER)
+    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JsonIgnoreProperties("user") // Ignore the user when serializing courses
     private List<Course> courseList;
 
-    @OneToMany(mappedBy = "user",cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<AssignmentSubmission> assignmentSubmissionList;
 
     public Long getUserId() {
