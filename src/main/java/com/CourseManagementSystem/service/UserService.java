@@ -4,6 +4,7 @@ import com.CourseManagementSystem.dao.UserRepository;
 import com.CourseManagementSystem.entities.JWTRequest;
 import com.CourseManagementSystem.entities.User;
 import com.CourseManagementSystem.errors.ResourceNotFoundException;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -32,6 +33,7 @@ public class UserService {
     @Autowired
     private JWTService jwtService;
 
+    @Transactional
     public ResponseEntity<String> registerUser(User user) {
 
         Optional<User> existingUser = this.userRepository.findByEmail(user.getEmail());

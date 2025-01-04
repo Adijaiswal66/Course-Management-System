@@ -2,6 +2,7 @@ package com.CourseManagementSystem.controller;
 
 import com.CourseManagementSystem.entities.Assignment;
 import com.CourseManagementSystem.service.AssignmentService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -16,7 +17,7 @@ public class AssignmentController {
     private AssignmentService assignmentService;
 
     @PostMapping(value = "/create-assignment")
-    public ResponseEntity<String> createAssignment(@RequestBody Assignment assignment) {
+    public ResponseEntity<String> createAssignment(@Valid @RequestBody Assignment assignment) {
         return this.assignmentService.createAssignment(assignment);
     }
 

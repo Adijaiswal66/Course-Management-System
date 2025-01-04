@@ -4,6 +4,7 @@ import com.CourseManagementSystem.dao.UserRepository;
 import com.CourseManagementSystem.entities.JWTRequest;
 import com.CourseManagementSystem.entities.User;
 import com.CourseManagementSystem.service.UserService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -26,7 +27,7 @@ public class StudentController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<String> register(@RequestBody User user) {
+    public ResponseEntity<String> register(@Valid @RequestBody User user) {
         return this.userService.registerUser(user);
     }
 

@@ -2,6 +2,7 @@ package com.CourseManagementSystem.controller;
 
 import com.CourseManagementSystem.entities.Course;
 import com.CourseManagementSystem.service.CourseService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -16,7 +17,7 @@ public class CourseController {
     private CourseService courseService;
 
     @PostMapping(value = "/add-course")
-    public ResponseEntity<String> addCourse(@RequestBody Course course) {
+    public ResponseEntity<String> addCourse(@Valid @RequestBody Course course) {
         return this.courseService.addCourse(course);
     }
 
