@@ -30,6 +30,8 @@ public class User {
     @Column(name = "Password")
     private String password;
 
+    private Boolean isAccountLocked;
+
     @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JsonIgnoreProperties("user") // Ignore the user when serializing courses
     private List<Course> courseList;
@@ -85,14 +87,25 @@ public class User {
         this.assignmentSubmissionList = assignmentSubmissionList;
     }
 
+    public Boolean getAccountLocked() {
+        return isAccountLocked;
+    }
+
+    public void setAccountLocked(Boolean accountLocked) {
+        isAccountLocked = accountLocked;
+    }
+
     public User() {
     }
 
-    public User(Long userId, String name, String email, String password) {
+    public User(Long userId, String name, String email, String password, Boolean isAccountLocked, List<Course> courseList, List<AssignmentSubmission> assignmentSubmissionList) {
         this.userId = userId;
         this.name = name;
         this.email = email;
         this.password = password;
+        this.isAccountLocked = isAccountLocked;
+        this.courseList = courseList;
+        this.assignmentSubmissionList = assignmentSubmissionList;
     }
 
     @Override
@@ -102,6 +115,9 @@ public class User {
                 ", name='" + name + '\'' +
                 ", email='" + email + '\'' +
                 ", password='" + password + '\'' +
+                ", isAccountLocked=" + isAccountLocked +
+                ", courseList=" + courseList +
+                ", assignmentSubmissionList=" + assignmentSubmissionList +
                 '}';
     }
 }

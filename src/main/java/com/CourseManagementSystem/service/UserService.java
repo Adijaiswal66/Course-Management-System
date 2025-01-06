@@ -4,7 +4,6 @@ import com.CourseManagementSystem.dao.UserRepository;
 import com.CourseManagementSystem.entities.JWTRequest;
 import com.CourseManagementSystem.entities.User;
 import com.CourseManagementSystem.errors.ResourceNotFoundException;
-import com.CourseManagementSystem.security.LoginAttemptService;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -18,15 +17,20 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Service
 public class UserService {
 
+    private BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(12);
+
+    private final int MAX_ATTEMPTS = 5;
+    private final long LOCK_TIME_DURATION = 15 * 60 * 1000;  // 15 minutes
+
     @Autowired
     private UserRepository userRepository;
-
-    private BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(12);
 
     @Autowired
     private AuthenticationManager manager;
@@ -34,8 +38,39 @@ public class UserService {
     @Autowired
     private JWTService jwtService;
 
-    @Autowired
-    private LoginAttemptService loginAttemptService;
+    private final Map<String, Integer> attemptsCache = new ConcurrentHashMap<>();
+    private final Map<String, Long> lockTimeCache = new ConcurrentHashMap<>();
+
+    public void loginFailed(String email) {
+        User user = this.userRepository.findByUserName(email);
+        attemptsCache.put(email, attemptsCache.getOrDefault(email, 0) + 1);
+        if (attemptsCache.get(email) >= MAX_ATTEMPTS) {
+            user.setAccountLocked(true);
+            this.userRepository.save(user);
+            lockTimeCache.put(email, System.currentTimeMillis() + LOCK_TIME_DURATION);
+        }
+    }
+
+    public void loginSucceeded(String email) {
+        User user = this.userRepository.findByUserName(email);
+        attemptsCache.remove(email);
+        lockTimeCache.remove(email);
+        user.setAccountLocked(false);
+        this.userRepository.save(user);
+    }
+
+    public boolean isBlocked(String email) {
+        User user = this.userRepository.findByUserName(email);
+
+        if (!lockTimeCache.containsKey(email)) return false;
+
+        if (lockTimeCache.get(email) < System.currentTimeMillis()) {
+            lockTimeCache.remove(email); // Unlock user
+            user.setAccountLocked(false);
+            return false;
+        }
+        return true;
+    }
 
     @Transactional
     public ResponseEntity<String> registerUser(User user) {
@@ -45,6 +80,7 @@ public class UserService {
             try {
                 user.setPassword(encoder.encode(user.getPassword()));
                 user.setEmail(user.getEmail().toLowerCase());
+                user.setAccountLocked(false);
                 this.userRepository.save(user);
                 return new ResponseEntity<>("User with email " + user.getEmail() + " is registered successfully !!", HttpStatus.OK);
             } catch (Exception e) {
@@ -68,18 +104,16 @@ public class UserService {
 //    }
 
     public ResponseEntity<?> login(JWTRequest jwtRequest) {
-        if (loginAttemptService.isBlocked(jwtRequest.getEmail())) {
+        if (isBlocked(jwtRequest.getEmail())) {
             return new ResponseEntity<>("Your account is locked due to too many failed attempts. Please try again after some time!!", HttpStatus.FORBIDDEN);
         }
         try {
             // Authenticate the user
             Authentication authenticate = this.manager.authenticate(new UsernamePasswordAuthenticationToken(jwtRequest.getEmail(), jwtRequest.getPassword()));
-            loginAttemptService.loginSucceeded(jwtRequest.getEmail());
+            loginSucceeded(jwtRequest.getEmail());
             if (authenticate.isAuthenticated()) {
-
                 // Generate JWT token
                 String token = jwtService.generateToken(jwtRequest.getEmail());
-
                 // Create HTTP-only cookie for the token
                 ResponseCookie jwtCookie = ResponseCookie.from("jwtToken", token)
                         .httpOnly(true)
@@ -94,7 +128,7 @@ public class UserService {
                         .body("Login successful!");
             }
         } catch (Exception e) {
-            loginAttemptService.loginFailed(jwtRequest.getEmail());
+            loginFailed(jwtRequest.getEmail());
             System.out.println(e.getMessage());
         }
         // Handle authentication failure
