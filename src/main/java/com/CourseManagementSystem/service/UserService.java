@@ -1,8 +1,7 @@
 package com.CourseManagementSystem.service;
 
 import com.CourseManagementSystem.dao.UserRepository;
-import com.CourseManagementSystem.entities.JWTRequest;
-import com.CourseManagementSystem.entities.User;
+import com.CourseManagementSystem.entities.*;
 import com.CourseManagementSystem.errors.ResourceNotFoundException;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -73,22 +72,23 @@ public class UserService {
     }
 
     @Transactional
-    public ResponseEntity<String> registerUser(User user) {
-
-        Optional<User> existingUser = this.userRepository.findByEmail(user.getEmail());
+    public ResponseEntity<String> registerUser(RegistrationDTO registrationDTO) {
+        Optional<User> existingUser = this.userRepository.findByEmail(registrationDTO.getEmail().toLowerCase());
+        User user = new User();
         if (existingUser.isEmpty()) {
             try {
-                user.setPassword(encoder.encode(user.getPassword()));
-                user.setEmail(user.getEmail().toLowerCase());
+                user.setName(registrationDTO.getName());
+                user.setPassword(encoder.encode(registrationDTO.getPassword()));
+                user.setEmail(registrationDTO.getEmail().toLowerCase());
                 user.setAccountLocked(false);
                 this.userRepository.save(user);
-                return new ResponseEntity<>("User with email " + user.getEmail() + " is registered successfully !!", HttpStatus.OK);
+                return new ResponseEntity<>("User with email " + registrationDTO.getEmail() + " is registered successfully !!", HttpStatus.OK);
             } catch (Exception e) {
                 System.out.println(e.getMessage());
                 return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
             }
         }
-        return new ResponseEntity<>(user.getEmail() + " already exists !", HttpStatus.ALREADY_REPORTED);
+        return new ResponseEntity<>(registrationDTO.getEmail() + " already exists !", HttpStatus.ALREADY_REPORTED);
 
     }
 
@@ -136,18 +136,16 @@ public class UserService {
     }
 
 
-    public ResponseEntity<String> editProfile(Long userId, User user) {
+    public ResponseEntity<String> editProfile(Long userId, EditProfileDTO editProfileDTO) {
         Optional<User> existingUser = this.userRepository.findById(userId);
         if (existingUser.isPresent()) {
             try {
                 existingUser.map(u -> {
-                    u.setName(user.getName());
-                    u.setPassword(encoder.encode(user.getPassword()));
+                    u.setName(editProfileDTO.getName());
+                    u.setPassword(encoder.encode(editProfileDTO.getPassword()));
                     return this.userRepository.save(u);
                 });
-
                 return new ResponseEntity<>("User with email: " + existingUser.get().getEmail() + " is updated successfully", HttpStatus.OK);
-
             } catch (Exception e) {
                 System.out.println(e.getMessage());
             }
@@ -166,14 +164,29 @@ public class UserService {
         return new ResponseEntity<>("User with id " + userId + " does not exist!!", HttpStatus.NOT_FOUND);
     }
 
-    public ResponseEntity<List<User>> getAllUsers() {
+    public ResponseEntity<List<UserDTO>> getAllUsers() {
         List<User> userList = this.userRepository.findAll();
         if (userList.isEmpty()) return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        return new ResponseEntity<>(userList, HttpStatus.OK);
+
+        List<UserDTO> userDTOList = userList.stream().map((user) -> {
+            UserDTO userDTO = new UserDTO();
+            userDTO.setUserId(user.getUserId());
+            userDTO.setName(user.getName());
+            userDTO.setEmail(user.getEmail());
+            userDTO.setAccountLocked(user.getAccountLocked());
+            return userDTO;
+        }).toList();
+
+        return new ResponseEntity<>(userDTOList, HttpStatus.OK);
     }
 
-    public ResponseEntity<User> getUserById(Long userId) {
+    public ResponseEntity<UserDTO> getUserById(Long userId) {
         User user = this.userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User not found!!"));
-        return new ResponseEntity<>(user, HttpStatus.OK);
+        UserDTO userDTO = new UserDTO();
+        userDTO.setUserId(user.getUserId());
+        userDTO.setName(user.getName());
+        userDTO.setEmail(user.getEmail());
+        userDTO.setAccountLocked(user.getAccountLocked());
+        return new ResponseEntity<>(userDTO, HttpStatus.OK);
     }
 }

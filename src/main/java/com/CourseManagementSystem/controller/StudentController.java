@@ -1,8 +1,7 @@
 package com.CourseManagementSystem.controller;
 
 import com.CourseManagementSystem.dao.UserRepository;
-import com.CourseManagementSystem.entities.JWTRequest;
-import com.CourseManagementSystem.entities.User;
+import com.CourseManagementSystem.entities.*;
 import com.CourseManagementSystem.service.UserService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,8 +26,8 @@ public class StudentController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<String> register(@Valid @RequestBody User user) {
-        return this.userService.registerUser(user);
+    public ResponseEntity<String> register(@Valid @RequestBody RegistrationDTO registrationDTO) {
+        return this.userService.registerUser(registrationDTO);
     }
 
     @PostMapping("/login")
@@ -37,22 +36,22 @@ public class StudentController {
     }
 
     @PutMapping("/edit-profile/{userId}")
-    public ResponseEntity<String> editProfile(@PathVariable("userId") Long userId, @RequestBody User user){
-        return this.userService.editProfile(userId,user);
+    public ResponseEntity<String> editProfile(@PathVariable("userId") Long userId,@Valid @RequestBody EditProfileDTO editProfileDTO) {
+        return this.userService.editProfile(userId, editProfileDTO);
     }
 
     @DeleteMapping(value = "/delete-profile/{userId}")
-    public ResponseEntity<String> deleteProfile(@PathVariable("userId") Long userId){
+    public ResponseEntity<String> deleteProfile(@PathVariable("userId") Long userId) {
         return this.userService.deleteProfile(userId);
     }
 
     @GetMapping(value = "/get-users")
-    public ResponseEntity<List<User>> getAllUsers(){
+    public ResponseEntity<List<UserDTO>> getAllUsers() {
         return this.userService.getAllUsers();
     }
 
     @GetMapping(value = "/get-user/{userId}")
-    public ResponseEntity<User> getUserById(@PathVariable("userId") Long userId){
+    public ResponseEntity<UserDTO> getUserById(@PathVariable("userId") Long userId) {
         return this.userService.getUserById(userId);
     }
 
