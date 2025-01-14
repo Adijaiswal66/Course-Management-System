@@ -3,8 +3,10 @@ package com.CourseManagementSystem.controller;
 import com.CourseManagementSystem.dao.UserRepository;
 import com.CourseManagementSystem.entities.*;
 import com.CourseManagementSystem.service.UserService;
+import io.github.resilience4j.ratelimiter.annotation.RateLimiter;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -36,7 +38,7 @@ public class StudentController {
     }
 
     @PutMapping("/edit-profile/{userId}")
-    public ResponseEntity<String> editProfile(@PathVariable("userId") Long userId,@Valid @RequestBody EditProfileDTO editProfileDTO) {
+    public ResponseEntity<String> editProfile(@PathVariable("userId") Long userId, @Valid @RequestBody EditProfileDTO editProfileDTO) {
         return this.userService.editProfile(userId, editProfileDTO);
     }
 
@@ -50,9 +52,18 @@ public class StudentController {
         return this.userService.getAllUsers();
     }
 
+    @RateLimiter(name = "userRateLimiter", fallbackMethod = "userFallback")
     @GetMapping(value = "/get-user/{userId}")
     public ResponseEntity<UserDTO> getUserById(@PathVariable("userId") Long userId) {
         return this.userService.getUserById(userId);
+    }
+
+    public ResponseEntity<UserDTO> userFallback(String userId, Exception ex) {
+        UserDTO userDTO = new UserDTO();
+        userDTO.setName("Dummy");
+        userDTO.setEmail("dummy@gmail.com");
+        userDTO.setAccountLocked(false);
+        return new ResponseEntity<>(userDTO, HttpStatus.OK);
     }
 
 }
