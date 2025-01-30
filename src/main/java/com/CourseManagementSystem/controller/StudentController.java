@@ -5,6 +5,8 @@ import com.CourseManagementSystem.entities.*;
 import com.CourseManagementSystem.service.UserService;
 import io.github.resilience4j.ratelimiter.annotation.RateLimiter;
 import jakarta.validation.Valid;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,6 +24,9 @@ public class StudentController {
     @Autowired
     private UserRepository userRepository;
 
+    private final Logger logger = LoggerFactory.getLogger(StudentController.class);
+
+
     @GetMapping("/test")
     public String testing() {
         return "student";
@@ -29,6 +34,7 @@ public class StudentController {
 
     @PostMapping("/register")
     public ResponseEntity<String> register(@Valid @RequestBody RegistrationDTO registrationDTO) {
+
         return this.userService.registerUser(registrationDTO);
     }
 
@@ -58,7 +64,8 @@ public class StudentController {
         return this.userService.getUserById(userId);
     }
 
-    public ResponseEntity<UserDTO> userFallback(String userId, Exception ex) {
+    public ResponseEntity<UserDTO> userFallback(Long userId, Exception ex) {
+        logger.error("Fallback triggered for userId: {}. Reason: {}", userId, ex.getMessage());
         UserDTO userDTO = new UserDTO();
         userDTO.setName("Dummy");
         userDTO.setEmail("dummy@gmail.com");

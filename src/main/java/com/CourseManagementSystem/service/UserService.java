@@ -40,6 +40,10 @@ public class UserService {
     private final Map<String, Integer> attemptsCache = new ConcurrentHashMap<>();
     private final Map<String, Long> lockTimeCache = new ConcurrentHashMap<>();
 
+    public UserService(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
+
     public void loginFailed(String email) {
         User user = this.userRepository.findByUserName(email);
         attemptsCache.put(email, attemptsCache.getOrDefault(email, 0) + 1);
@@ -180,6 +184,7 @@ public class UserService {
         return new ResponseEntity<>(userDTOList, HttpStatus.OK);
     }
 
+    //    @Cacheable(value = "UserDTO",key = "#userId")
     public ResponseEntity<UserDTO> getUserById(Long userId) {
         User user = this.userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User not found!!"));
         UserDTO userDTO = new UserDTO();

@@ -25,6 +25,11 @@ public class CourseService {
     @Autowired
     private UserRepository userRepository;
 
+    public CourseService(CourseRepository courseRepository) {
+        this.courseRepository = courseRepository;
+    }
+
+
     public ResponseEntity<String> addCourse(Course course) {
         Optional<Course> existingCourse = this.courseRepository.findByCourseName(course.getCourseName());
         if (existingCourse.isEmpty()) {

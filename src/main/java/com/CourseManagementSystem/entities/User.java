@@ -5,11 +5,13 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
+import lombok.Builder;
 
 import java.util.List;
 
 @Entity
 @Table(name = "Users")
+//@Builder
 public class User {
 
     @Id
@@ -98,14 +100,12 @@ public class User {
     public User() {
     }
 
-    public User(Long userId, String name, String email, String password, Boolean isAccountLocked, List<Course> courseList, List<AssignmentSubmission> assignmentSubmissionList) {
+    public User(Long userId, String name, String email, String password, Boolean isAccountLocked) {
         this.userId = userId;
         this.name = name;
         this.email = email;
         this.password = password;
         this.isAccountLocked = isAccountLocked;
-        this.courseList = courseList;
-        this.assignmentSubmissionList = assignmentSubmissionList;
     }
 
     @Override

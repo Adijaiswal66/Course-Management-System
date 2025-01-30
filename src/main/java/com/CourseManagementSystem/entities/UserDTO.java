@@ -8,7 +8,9 @@ import jakarta.persistence.Id;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
+import lombok.Builder;
 
+@Builder
 public class UserDTO {
 
     private Long userId;
@@ -51,5 +53,13 @@ public class UserDTO {
         isAccountLocked = accountLocked;
     }
 
+    public UserDTO(Long userId, String name, String email, Boolean isAccountLocked) {
+        this.userId = userId;
+        this.name = name;
+        this.email = email;
+        this.isAccountLocked = isAccountLocked;
+    }
 
+    public UserDTO() {
+    }
 }
