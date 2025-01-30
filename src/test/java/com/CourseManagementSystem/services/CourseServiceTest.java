@@ -15,6 +15,7 @@ import org.slf4j.Logger;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -26,11 +27,12 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 public class CourseServiceTest {
 
+    @InjectMocks
+    private CourseService courseService;
+
     @Mock
     private CourseRepository courseRepository;
 
-    @InjectMocks
-    private CourseService courseService;
 
     @BeforeEach
     void setUp() {
@@ -68,21 +70,88 @@ public class CourseServiceTest {
         assertEquals(HttpStatus.OK, response.getStatusCode());
     }
 
-//    @Test
-//    public void getAllCoursesTest_CourseExists() {
-//        Course course = new Course();
-//        course.setCourseName("TestCourse");
-//        Course course1 = new Course();
-//        course.setCourseName("TestCourse1");
-//
-//        when(courseRepository.findAll()).thenReturn(List.of(course, course1));
-//
-//        ResponseEntity<List<Course>> response = courseService.getAllCourses();
-//
-//        System.out.println(response);
-//        assertNotNull(response);
-//        assertEquals(2, response.getBody().size());
-//    }
+    @Test
+    public void getAllCoursesTest_CourseExists() {
+        Course course = new Course();
+        course.setCourseName("TestCourse");
 
+        Course course1 = new Course();
+        course1.setCourseName("TestCourse1");
+
+        when(courseRepository.count()).thenReturn(2L);
+        when(courseRepository.findAll()).thenReturn(List.of(course, course1));
+
+        ResponseEntity<List<Course>> response = courseService.getAllCourses();
+
+        assertNotNull(response);
+        assertNotNull(response.getBody());
+        assertEquals(2, response.getBody().size());
+    }
+
+    @Test
+    public void getAllCourseTest_CourseDoesNotExists() {
+        when(courseRepository.count()).thenReturn(0L);
+
+        ResponseEntity<List<Course>> response = courseService.getAllCourses();
+
+        assertEquals(HttpStatus.NO_CONTENT, response.getStatusCode());
+    }
+
+    @Test
+    public void getCourseByIdTest_CourseExists() {
+        Course course = new Course();
+        course.setCourseId(1L);
+
+        when(courseRepository.findById(1L)).thenReturn(Optional.of(course));
+
+        ResponseEntity<Course> response = courseService.getCourseById(1L);
+
+        assertNotNull(response);
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+    }
+
+    @Test
+    public void getCourseByIdTest_CourseDoesNotExists() {
+
+        when(courseRepository.findById(1L)).thenReturn(Optional.empty());
+
+        ResponseEntity<Course> response = courseService.getCourseById(1L);
+
+        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+    }
+
+    @Test
+    public void editCourseTest_CourseExists() {
+        Course course = new Course();
+        course.setCourseId(1L);
+        course.setCourseName("TestCourse");
+        course.setCourseDescription("TestDesc");
+
+        when(courseRepository.findById(1L)).thenReturn(Optional.of(course));
+
+        course.setCourseDescription("TestDescription");
+
+        when(courseRepository.save(any(Course.class))).thenReturn(course);
+
+        ResponseEntity<String> response = courseService.editCourse(1L, course);
+
+        assertNotNull(response);
+        assertEquals("TestDescription", course.getCourseDescription());
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals("Course with id: 1 is updated successfully!!", response.getBody());
+    }
+
+    @Test
+    public void editCourseTest_CourseDoesNotExists() {
+        when(courseRepository.findById(1L)).thenReturn(Optional.empty());
+
+        Course course = new Course();
+
+        ResponseEntity<String> response = courseService.editCourse(1L,course);
+
+        assertNotNull(response);
+        assertEquals(HttpStatus.NOT_FOUND,response.getStatusCode());
+
+    }
 
 }
