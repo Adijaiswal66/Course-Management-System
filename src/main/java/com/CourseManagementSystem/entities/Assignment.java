@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -28,7 +29,7 @@ public class Assignment {
     private Course course;
 
     @OneToMany(mappedBy = "assignment",cascade = CascadeType.ALL)
-    private List<AssignmentSubmission> assignmentSubmissionList;
+    private List<AssignmentSubmission> assignmentSubmissionList = new ArrayList<>();
 
     public Long getAssignmentID() {
         return assignmentID;

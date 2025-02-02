@@ -29,16 +29,15 @@ public class AssignmentService {
 
     public ResponseEntity<List<Assignment>> getAllAssignments() {
         List<Assignment> assignmentList = this.assignmentRepository.findAll();
-        if (assignmentList.isEmpty()) return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        if (assignmentList.isEmpty()) return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         return new ResponseEntity<>(assignmentList, HttpStatus.OK);
     }
 
     public ResponseEntity<String> editAssignment(Long assignmentID, Assignment assignment) {
         Assignment existingAssignment = this.assignmentRepository.findById(assignmentID).orElseThrow(() -> new ResourceNotFoundException("Assignment not found!!"));
         existingAssignment.setAssignmentDescription(assignment.getAssignmentDescription());
-        existingAssignment.setAssignmentName(assignment.getAssignmentName());
         existingAssignment.setAssignmentDueDate(assignment.getAssignmentDueDate());
         this.assignmentRepository.save(existingAssignment);
-        return new ResponseEntity<>("Assignment with id: " + assignmentID + " is updated successfully", HttpStatus.OK);
+        return new ResponseEntity<>("Assignment with id: " + assignmentID + " is updated successfully !!", HttpStatus.OK);
     }
 }

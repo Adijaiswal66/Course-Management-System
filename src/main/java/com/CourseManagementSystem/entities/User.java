@@ -7,6 +7,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.Builder;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -36,10 +37,10 @@ public class User {
 
     @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JsonIgnoreProperties("user") // Ignore the user when serializing courses
-    private List<Course> courseList;
+    private List<Course> courseList = new ArrayList<>();
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
-    private List<AssignmentSubmission> assignmentSubmissionList;
+    private List<AssignmentSubmission> assignmentSubmissionList = new ArrayList<>();
 
     public Long getUserId() {
         return userId;

@@ -37,8 +37,8 @@ public class CourseController {
     }
 
     @DeleteMapping(value = "/delete-course/{courseId}")
-    public ResponseEntity<String> deleteCourse(@PathVariable("courseId") Long courseId, @RequestBody Course course) {
-        return this.courseService.deleteCourse(courseId, course);
+    public ResponseEntity<String> deleteCourse(@PathVariable("courseId") Long courseId) {
+        return this.courseService.deleteCourse(courseId);
     }
 
     @PostMapping(value = "/assign-course/{userId}/{courseId}")

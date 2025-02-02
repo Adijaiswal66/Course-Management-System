@@ -16,9 +16,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -36,10 +34,6 @@ public class UserServiceTest {
     @Mock
     private BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(12);
 
-    @BeforeEach
-    void setUp() {
-        this.userService = new UserService(this.userRepository);
-    }
 
     @Test
     public void getUserByIdTest() {
@@ -70,13 +64,13 @@ public class UserServiceTest {
     public void getAllUsersTest() {
         User user = new User(1L, "Test", "Test@gmail.com", "password", false);
         User user1 = new User(2L, "Test1", "Test1@gmail.com", "password", false);
-        when(userRepository.findAll()).thenReturn(List.of(user, user1));
+        when(userRepository.findAll()).thenReturn(new ArrayList<>(List.of(user, user1)));
 
         ResponseEntity<List<UserDTO>> response = userService.getAllUsers();
 
         assertNotNull(response);
         assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals(2, response.getBody().size());
+        assertEquals(2, Objects.requireNonNull(response.getBody()).size());
         assertEquals("Test", response.getBody().get(0).getName());
         assertEquals("Test1", response.getBody().get(1).getName());
     }
